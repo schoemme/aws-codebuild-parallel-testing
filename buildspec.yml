@@ -1,0 +1,27 @@
+version: 0.2
+
+batch:
+  fast-fail: false
+  build-fanout:
+    parallelism: 3
+    ignore-failure: false
+
+phases:
+  install:
+    commands:
+      - echo 'Installing Python dependencies'
+      - apt-get update
+      - apt-get install -y python3 python3-pip
+      - pip3 install --upgrade pip
+      - pip3 install pytest
+  build:
+    commands:
+      - echo 'Running Python Tests'
+      - |
+         codebuild-tests-run \
+          --test-command 'python -m pytest' \
+          --files-search "codebuild-glob-search 'tests/test_*.py'" \
+          --sharding-strategy 'equal-distribution'
+  post_build:
+    commands:
+      - echo "Test execution completed"
