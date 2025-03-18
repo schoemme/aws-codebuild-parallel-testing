@@ -18,9 +18,16 @@ phases:
       - echo 'Running Python Tests'
       - |
          codebuild-tests-run \
-          --test-command 'python -m pytest' \
+          --test-command 'python -m pytest --junitxml=report/test_report.xml' \
           --files-search "codebuild-glob-search 'tests/test_*.py'" \
           --sharding-strategy 'equal-distribution'
   post_build:
     commands:
       - echo "Test execution completed"
+
+reports:
+  pytest_reports:
+    files:
+      - "*.xml"
+    base-directory: "report"
+    file-format: JUNITXML      
