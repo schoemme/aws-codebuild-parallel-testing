@@ -1,4 +1,5 @@
 import os
+import time
 
 # Operations to test
 operations = [
@@ -24,22 +25,31 @@ class Test{operation_cap}{test_num}(unittest.TestCase):
         self.calc = Calculator()
     
     def test_{operation}_{test_num}(self):
+        time.sleep(1)  # 1 second delay
         self.assertEqual(self.calc.{operation}({test_args}), {test_result})
 
 if __name__ == '__main__':
     unittest.main()
 '''
 
+file_per_operations = 300
+
+# Create tests directory if it doesn't exist
+tests_dir = "tests"
+if not os.path.exists(tests_dir):
+    os.makedirs(tests_dir)
+    print(f"Created directory: {tests_dir}")
+
 # Create test files
 for op_idx, (operation, _, args, result) in enumerate(operations):
     operation_cap = operation.capitalize()
     
     # Create more files for each operation
-    for i in range(1, 51):  # 50 files per operation = 300 files total
-        test_num = i + (op_idx * 50)
+    for i in range(1, file_per_operations + 1):  # file_per_operations files per operation = 4 * file_per_operations files total
+        test_num = i + (op_idx * file_per_operations)
         
         # Create test file
-        filename = f"tests/test_{operation}_{i:03d}.py"
+        filename = f"{tests_dir}/test_{operation}_{i:03d}.py"
         with open(filename, 'w') as f:
             f.write(test_template.format(
                 operation_cap=operation_cap,
@@ -49,4 +59,4 @@ for op_idx, (operation, _, args, result) in enumerate(operations):
                 test_result=result
             ))
 
-print(f"Generated {len(operations) * 50} test files in the tests directory.")
+print(f"Generated {len(operations) * file_per_operations} test files in the tests directory.")
